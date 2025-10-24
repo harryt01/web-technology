@@ -1,0 +1,204 @@
+/* ex2/style.css */
+
+* { box-sizing: border-box; }
+
+:root {
+  --page-max-width: 1000px;
+  --page-padding: 16px;
+  --bg: #f7f9fc;
+  --card-bg: #ffffff;
+  --muted: #444;
+  --accent: #1a73e8;
+  --price-color: #c9302c;
+  --card-border: #e3e9f0;
+}
+
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  padding: var(--page-padding);
+  background: var(--bg);
+  color: #222;
+}
+
+/* -------------------------
+   Page layout
+   ------------------------- */
+header {
+  margin-bottom: 16px;
+}
+
+header h1 {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+/* simple horizontal nav */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+/* center content and limit width */
+main {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+}
+
+/* small hero/intro spacing */
+main section:first-of-type {
+  margin-bottom: 8px;
+}
+
+/* -------------------------
+   Product grid: 3 columns
+   ------------------------- */
+#products {
+  margin-top: 14px;
+}
+
+#products > h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+/* grid wrapper: exactly 3 columns per request */
+#products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 16px;
+  align-items: start;
+}
+
+/* product card */
+#products-grid article {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* pushes price/footer to bottom */
+  min-height: 360px; /* consistent card height on desktop */
+}
+
+/* content group above the price */
+.product-content {
+  /* left intentionally minimal: this holds title, image, description */
+}
+
+/* fixed image height = consistent layout */
+#products-grid img {
+  width: 100%;          /* fill the card width */
+  height: 180px;        /* fixed height so all images same size */
+  object-fit: cover;    /* crop/scale neatly */
+  display: block;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+/* title / description */
+#products-grid h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+#products-grid p {
+  margin: 0 0 8px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* price area stays at the bottom due to space-between */
+.product-footer {
+  margin-top: 10px;
+  font-weight: 700;
+  color: var(--price-color);
+}
+
+/* -------------------------
+   Contact form
+   ------------------------- */
+form {
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  max-width: 600px;
+  margin-top: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* make submit button visually nicer */
+form button[type="submit"] {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+  opacity: 0.95;
+}
+
+/* -------------------------
+   Footer
+   ------------------------- */
+footer {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* -------------------------
+   Responsive adjustments
+   ------------------------- */
+@media (max-width: 1024px) {
+  /* on medium screens, reduce card min-height slightly for better fit */
+  #products-grid article { min-height: 320px; }
+  #products-grid img { height: 160px; }
+}
+
+@media (max-width: 720px) {
+  /* small screens: stack products vertically (single column) */
+  #products-grid {
+    grid-template-columns: 1fr; /* single column */
+  }
+
+  /* allow natural height on small screens */
+  #products-grid article { min-height: auto; }
+
+  /* make images a bit taller on mobile for visual balance */
+  #products-grid img { height: 220px; }
+
+  /* make header nav stack if needed */
+  nav ul { flex-direction: column; gap: 8px; }
+}

@@ -1,0 +1,134 @@
+<!-- ex3/index.html
+     Exercise 3: HTML structure for EX3.
+     - Links to external style.css and script.js (place both files in same folder).
+     - Contains product grid and a hidden add-product form (toggleable via JS).
+     - Search input + buttons for search and clear.
+-->
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lậu Bookstore — Ex3</title>
+
+  <!-- Link to external stylesheet for EX3 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header: semantic -->
+  <header>
+    <h1>Lậu Bookstore</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Trang chủ</a></li>
+        <li><a href="#products">Sản phẩm</a></li>
+        <li><a href="#contact">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Intro / hero -->
+    <section>
+      <h2>Giới thiệu</h2>
+      <p>Chúng tôi cung cấp sách chọn lọc cho mọi đối tượng: kỹ năng, văn học, lập trình...</p>
+    </section>
+
+    <!-- Controls: search + toggle add form -->
+    <section class="controls" style="margin:12px 0;">
+      <!-- Search box -->
+      <input id="searchInput" type="text" placeholder="Tìm kiếm sản phẩm..." aria-label="Search products">
+      <button id="searchBtn">Tìm</button>
+      <button id="clearBtn" class="btn-secondary">Xóa</button>
+
+      <!-- Spacer to push the Add button to the right on wide screens -->
+      <div style="flex:1"></div>
+
+      <!-- Toggle Add Product form -->
+      <button id="addProductBtn">Thêm sản phẩm</button>
+    </section>
+
+    <!-- Products -->
+    <section id="products" aria-label="Danh sách sản phẩm">
+      <h2>Sản phẩm</h2>
+
+      <div id="products-grid">
+        <!-- Product 1 -->
+        <article>
+          <div class="product-content">
+            <h3>Sách: 300 Bài Code Thiếu Nhi</h3>
+            <img src="https://300baicode.com/_astro/book_cover.C2U2uA1A.png" alt="300 Bài Code Thiếu Nhi cover">
+            <p>Một cuốn sách giúp bạn làm vua mọi nghề một cách hiệu quả.</p>
+          </div>
+          <div class="product-footer">Giá: 300.000₫</div>
+        </article>
+
+        <!-- Product 2 -->
+        <article>
+          <div class="product-content">
+            <h3>Sách: Tiếng Việt 1 (tập một)</h3>
+            <img src="https://hieusach24h.com/wp-content/uploads/2021/09/Tieng-Vieti-1-Tap-1-Ket-noi-tri-thuc.jpg" alt="Tiếng Việt 1 cover">
+            <p>Giúp bạn lấy gốc tiếng Việt cơ bản.</p>
+          </div>
+          <div class="product-footer">Giá: 95.000₫</div>
+        </article>
+
+        <!-- Product 3 -->
+        <article>
+          <div class="product-content">
+            <h3>Sách: Đắc Nhân Tâm</h3>
+            <img src="https://nxbhcm.com.vn/Image/Biasach/dacnhantam86.jpg" alt="Đắc Nhân Tâm cover">
+            <p>Kỹ năng giao tiếp cho cuộc sống và công việc.</p>
+          </div>
+          <div class="product-footer">Giá: 150.000₫</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Add Product form (hidden by default; toggled by JS) -->
+    <section id="add-section" style="margin-top:18px;">
+      <form id="addProductForm" class="hidden" aria-hidden="true">
+        <h3>Thêm sản phẩm (demo)</h3>
+
+        <label for="newName">Tên sản phẩm</label>
+        <input id="newName" type="text" placeholder="Tên sản phẩm">
+
+        <label for="newPrice">Giá (VND)</label>
+        <input id="newPrice" type="number" min="1" placeholder="100000">
+
+        <div style="margin-top:8px;">
+          <!-- In EX3 we only show/hide the form; submission handling will be in EX4 -->
+          <button type="submit">Thêm (disabled 😉)</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Hủy</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Contact form (simple demo) -->
+    <section id="contact" aria-label="Liên hệ" style="margin-top:18px;">
+      <h2>Liên hệ</h2>
+      <form id="contactForm">
+        <label for="name">Tên</label>
+        <input id="name" type="text" required>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" required>
+
+        <label for="message">Nội dung</label>
+        <textarea id="message" rows="4"></textarea>
+
+        <div style="margin-top:8px;">
+          <button type="submit">Gửi</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Lậu Bookstore</p>
+  </footer>
+
+  <!-- Link to external script (placed at end so DOM elements exist) -->
+  <script src="script.js"></script>
+</body>
+</html>
