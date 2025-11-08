@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>React CRUD practice</title>
+
+    <!-- 1.2. add libs through CDN -->
+    <script src='https://unpkg.com/react@18/umd/react.development.js'></script> 
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js'></script> 
+    <script src='https://unpkg.com/@babel/standalone/babel.min.js'></script>
+
+    <style>
+        /* layout */
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { margin-bottom: 8px; }
+        .controls { display:flex; gap: 12px; align-items:center; margin-bottom: 10px; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="url"] {
+        padding: 6px; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-add { background: #2d9cdb; color: #fff; }
+        .btn-edit { background: #f6b93b; }
+        .btn-delete { background: #eb2f06; color: #fff; }
+
+        table { width:100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f7f7f7; }
+
+        /* 8. modal */
+        .modal-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.4); display:flex; justify-content:center; align-items:center;
+        z-index: 999;
+        }
+        .modal-content {
+        background: #fff; padding: 16px; border-radius: 8px; width: 420px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .modal-content h3 { margin-top:0; }
+        .form-row { margin-bottom: 8px; display:flex; gap:8px; }
+        .form-row label { min-width: 80px; }
+        .flex-between { display:flex; justify-content:space-between; align-items:center; }
+        .small { font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+
+<body>
+    <!-- 1.1 -->
+    <div id="root"></div>
+    
+    <!-- 1.3 -->
+    <script type="text/babel">
+        // helper utils
+        const deepCopy = (obj) => JSON.parse(JSON.stringify(obj));
+
+        // 3. SearchForm: child -> (keyword up with onChangeValue) -> parent -> ResultTable
+        function SearchForm({ onChangeValue }) {
+            return (
+                <input
+                    type="text"
+                    placeholder="Search by name or username..."
+                    onChange={(e) => onChangeValue(e.target.value)}
+                />
+            );
+        }
+
+        // 5. AddUser component: controlled inputs, nested address handling 
+        function AddUser({ onAdd }) {
+            const emptyUser = {
+                name: "", username: "", email: "",
+                address: { street: "", suite: "", city: "" },
+                phone: "", website: ""
+            };
+            const [show, setShow] = React.useState(false);
+            const [user, setUser] = React.useState(emptyUser);
+
+            const handleChange = (e) => {
+                const id = e.target.id;
+                const value = e.target.value;
+                if (["street","suite","city"].includes(id)) {
+                    setUser(prev => ({ ...prev, address: { ...prev.address, [id]: value } }));
+                } else {
+                    setUser(prev => ({ ...prev, [id]: value }));
+                }
+            };
+
+            const handleAdd = () => {
+                    if (!user.name.trim() || !user.username.trim()) {
+                    alert("Please fill Name and Username!");
+                    return;
+                }
+                    onAdd(deepCopy(user)); // send copy to parent
+                    setUser(emptyUser);
+                    setShow(false);
+            };
+
+            return (
+                <div>
+                    <button className="btn-add" onClick={() => setShow(true)}>Add User</button>
+
+                    {show && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <div className="flex-between">
+                                    <h3>Add User</h3>
+                                    <button onClick={() => { setShow(false); setUser(emptyUser); }}>Close</button>
+                                </div>
+
+                                <div className="form-row"><label htmlFor="name">Name</label>
+                                    <input id="name" type="text" value={user.name} onChange={handleChange} />
+                                </div>
+
+                                <div className="form-row"><label htmlFor="username">Username</label>
+                                    <input id="username" type="text" value={user.username} onChange={handleChange} />
+                                </div>
+
+                                <div className="form-row"><label htmlFor="email">Email</label>
+                                    <input id="email" type="email" value={user.email} onChange={handleChange} />
+                                </div>
+
+                                <fieldset style={{border:'1px solid #eee', padding:'8px', marginBottom:'8px'}}>
+                                    <legend className="small">Address</legend>
+                                    <div className="form-row"><label htmlFor="street">Street</label>
+                                        <input id="street" type="text" value={user.address.street} onChange={handleChange}/>
+                                    </div>
+                                    <div className="form-row"><label htmlFor="suite">Suite</label>
+                                        <input id="suite" type="text" value={user.address.suite} onChange={handleChange}/>
+                                    </div>
+                                    <div className="form-row"><label htmlFor="city">City</label>
+                                        <input id="city" type="text" value={user.address.city} onChange={handleChange}/>
+                                    </div>
+                                </fieldset>
+
+                                <div className="form-row"><label htmlFor="phone">Phone</label>
+                                    <input id="phone" type="tel" value={user.phone} onChange={handleChange}/>
+                                </div>
+
+                                <div className="form-row"><label htmlFor="website">Website</label>
+                                    <input id="website" type="url" value={user.website} onChange={handleChange}/>
+                                </div>
+
+                                <div style={{textAlign:'right', marginTop:8}}>
+                                    <button onClick={handleAdd} className="btn-add" style={{marginRight:8}}>Save</button>
+                                    <button onClick={() => { setShow(false); setUser(emptyUser); }}>Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // 6. EditUserModal: for editing (deep copy handled when opening) -----
+        function EditUserModal({ editing, setEditing, onSave }) {
+            if (!editing) return null;
+
+            const handleChange = (e) => {
+                const id = e.target.id;
+                const value = e.target.value;
+                if (["street","suite","city"].includes(id)) {
+                    setEditing(prev => ({ ...prev, address: { ...prev.address, [id]: value } }));
+                } else {
+                    setEditing(prev => ({ ...prev, [id]: value }));
+                }
+            };
+
+            const handleSave = () => {
+                if (!editing.name || !editing.username) {
+                alert("Name and Username required.");
+                return;
+                }
+                onSave(editing);
+            };
+
+            return (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="flex-between">
+                            <h3>Edit User</h3>
+                            <button onClick={() => setEditing(null)}>Close</button>
+                        </div>
+
+                        <div className="form-row"><label htmlFor="name">Name</label>
+                            <input id="name" type="text" value={editing.name} onChange={handleChange} />
+                        </div>
+
+                        <div className="form-row"><label htmlFor="username">Username</label>
+                            <input id="username" type="text" value={editing.username} onChange={handleChange} />
+                        </div>
+
+                        <div className="form-row"><label htmlFor="email">Email</label>
+                            <input id="email" type="email" value={editing.email || ''} onChange={handleChange} />
+                        </div>
+
+                        <fieldset style={{border:'1px solid #eee', padding:'8px', marginBottom:'8px'}}>
+                            <legend className="small">Address</legend>
+                            <div className="form-row"><label htmlFor="street">Street</label>
+                                <input id="street" type="text" value={editing.address?.street || ''} onChange={handleChange}/>
+                            </div>
+                            <div className="form-row"><label htmlFor="suite">Suite</label>
+                                <input id="suite" type="text" value={editing.address?.suite || ''} onChange={handleChange}/>
+                            </div>
+                            <div className="form-row"><label htmlFor="city">City</label>
+                                <input id="city" type="text" value={editing.address?.city || ''} onChange={handleChange}/>
+                            </div>
+                        </fieldset>
+
+                        <div className="form-row"><label htmlFor="phone">Phone</label>
+                            <input id="phone" type="tel" value={editing.phone || ''} onChange={handleChange}/>
+                        </div>
+
+                        <div className="form-row"><label htmlFor="website">Website</label>
+                            <input id="website" type="url" value={editing.website || ''} onChange={handleChange}/>
+                        </div>
+
+                        <div style={{textAlign:'right', marginTop:8}}>
+                            <button onClick={handleSave} className="btn-edit" style={{marginRight:8}}>Save</button>
+                            <button onClick={() => setEditing(null)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+
+        // 4. ResultTable: renders list, filters by keyword, triggers edit/delete 
+        function ResultTable({ users, keyword, onEditRequest, onDelete }) {
+        const lowKw = (keyword || "").toLowerCase();
+
+        const filtered = users.filter(u => {
+            if (!lowKw) return true;
+            return (u.name || "").toLowerCase().includes(lowKw) ||
+                (u.username || "").toLowerCase().includes(lowKw);
+        });
+
+        return (
+            <div>
+            <table>
+                <thead>
+                <tr>
+                    <th style={{width:'40px'}}>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>City</th>
+                    <th style={{width:'160px'}}>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {filtered.map(u => (
+                    <tr key={u.id}>
+                    <td>{u.id}</td>
+                    <td>{u.name}</td>
+                    <td>{u.username}</td>
+                    <td>{u.email}</td>
+                    <td>{u.address?.city}</td>
+                    <td>
+                        <button className="btn-edit" onClick={() => onEditRequest(u)} style={{marginRight:8}}>Edit</button>
+                        <button className="btn-delete" onClick={() => onDelete(u.id)}>Delete</button>
+                    </td>
+                    </tr>
+                ))}
+                {filtered.length === 0 && (
+                    <tr><td colSpan="6" style={{textAlign:'center', color:'#666'}}>No results.</td></tr>
+                )}
+                </tbody>
+            </table>
+            </div>
+        );
+        }
+
+        
+
+
+        // 1.4. App: top-level parent owning users and keyword (state lifting) 
+        function App() {
+            const [users, setUsers] = React.useState([]);       // central list
+            const [keyword, setKeyword] = React.useState("");   // search text
+            const [editing, setEditing] = React.useState(null); // editing user (deep copy)
+
+            // fetch initial users once on mount
+            React.useEffect(() => {
+                fetch("https://jsonplaceholder.typicode.com/users")
+                .then(res => res.json())
+                .then(data => setUsers(data))
+                .catch(err => {
+                    console.error("Failed to fetch users:", err);
+                    setUsers([]); // fallback empty
+                });
+            }, []);
+
+            // Create (Add) - receives newUser object from AddUser component
+            const handleAddUser = (newUserData) => {
+                setUsers(prev => {
+                // compute new id as max existing id + 1 (safe for this demo)
+                const maxId = prev.reduce((m, u) => Math.max(m, u.id || 0), 0);
+                return [...prev, { ...deepCopy(newUserData), id: maxId + 1 }];
+                });
+            };
+
+            // 7. Delete
+            const handleDelete = (id) => {
+                // spec said no confirmation; remove immediately
+                setUsers(prev => prev.filter(u => u.id !== id));
+            };
+
+            // When ResultTable wants to edit, create a deep copy and open modal
+            const handleEditRequest = (user) => {
+                setEditing(deepCopy(user)); // deep copy prevents accidental changes to list before save
+            };
+
+            // Save edited user back to list
+            const handleSaveEdit = (updatedUser) => {
+                setUsers(prev => prev.map(u => u.id === updatedUser.id ? deepCopy(updatedUser) : u));
+                setEditing(null);
+            };
+
+            return (
+                <div>
+                <h1>User Management (React CRUD)</h1>
+
+                <div className="controls">
+                    <SearchForm onChangeValue={setKeyword} />
+                    <AddUser onAdd={handleAddUser} />
+                    <div className="small">Total users: {users.length}</div>
+                </div>
+
+                <ResultTable
+                    users={users}
+                    keyword={keyword}
+                    onEditRequest={handleEditRequest}
+                    onDelete={handleDelete}
+                />
+
+                {/* Edit modal rendered at App level */}
+                <EditUserModal editing={editing} setEditing={setEditing} onSave={handleSaveEdit} />
+                </div>
+            );
+        }
+
+        // Render app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+    </script>  
+</body>
